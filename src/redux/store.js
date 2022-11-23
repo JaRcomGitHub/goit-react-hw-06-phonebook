@@ -24,7 +24,7 @@
 
 
 import { configureStore } from "@reduxjs/toolkit";
-import { getDefaultNormalizer } from "@testing-library/react";
+
 import {
   persistStore,
   FLUSH,
