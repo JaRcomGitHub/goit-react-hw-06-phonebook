@@ -1,10 +1,12 @@
 import { useState } from "react";
-import PropTypes from 'prop-types';
+import { useDispatch } from "react-redux";
+import { addNote } from "../../redux/actions";
 import css from './ContactForm.module.css'
 
-export default function ContactForm({onSubmit}) {
+export default function ContactForm() {
     const [name, setName] = useState('');//'Name Names'
     const [number, setNumber] = useState('');//'123-456-789'
+    const dispatch = useDispatch();
 
     const handleInputChangeName = event => {
         setName(event.currentTarget.value);
@@ -16,11 +18,11 @@ export default function ContactForm({onSubmit}) {
 
     const handleSubmit = event => {
         event.preventDefault();
-        
-        if (onSubmit({name, number})) {
+        if (1) {//добавить проверку, если уже есть
+            dispatch(addNote({name, number}));
             reset();
         }
-    }
+    };
 
     const reset = () => {
         setName('');
@@ -57,7 +59,3 @@ export default function ContactForm({onSubmit}) {
         </form>
     );
 }
-
-ContactForm.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-};

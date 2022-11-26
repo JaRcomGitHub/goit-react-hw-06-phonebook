@@ -1,30 +1,4 @@
-// import { createStore } from "redux";
-// import { devToolsEnhancer } from "@redux-devtools/extension";
-
-// const initialState = {
-//   tasks: [
-//     { id: 0, text: "Learn HTML and CSS", completed: true },
-//     { id: 1, text: "Get good at JavaScript", completed: true },
-//     { id: 2, text: "Master React", completed: false },
-//     { id: 3, text: "Discover Redux", completed: false },
-//     { id: 4, text: "Build amazing apps", completed: false },
-//   ],
-//   filters: {
-//     status: "all",
-//   },
-// };
-
-// const rootReducer = (state = initialState, action) => {
-//   return state;
-// };
-
-// const enhancer = devToolsEnhancer();
-
-// export const store = createStore(rootReducer, enhancer);
-
-
-import { configureStore } from "@reduxjs/toolkit";
-
+import { configureStore, createAction, createReducer } from "@reduxjs/toolkit";
 import {
   persistStore,
   FLUSH,
@@ -34,11 +8,29 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import { clicksReducer } from './clicksSlice';
+import { clicksReducer } from "./clicksSlice";
+
+
+export const addNote = createAction("phonebook/addNote");
+
+// const initialState = {
+//   contacts: [],
+//   filter: "",
+// }
+
+const initialState = [];
+
+const myReducer = createReducer
+  (initialState, {
+    [addNote]: (state, action) => [...state, {...action.payload}],
+})
+
+
 
 export const store = configureStore({
   reducer: {
-    click: clicksReducer,
+    contacts: myReducer,
+    delete: clicksReducer,
   },
   middleware(getDefaultMiddleware) {
     return getDefaultMiddleware({
