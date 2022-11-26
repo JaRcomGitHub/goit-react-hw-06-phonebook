@@ -1,4 +1,4 @@
-import { configureStore, createAction, createReducer } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import {
   persistStore,
   FLUSH,
@@ -8,29 +8,20 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import { clicksReducer } from "./clicksSlice";
+import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
+import { phonebookSlice } from "./phonebookSlice";
 
+const persistConfig = {
+    key: 'root',
+    storage,
+}
 
-export const addNote = createAction("phonebook/addNote");
-
-// const initialState = {
-//   contacts: [],
-//   filter: "",
-// }
-
-const initialState = [];
-
-const myReducer = createReducer
-  (initialState, {
-    [addNote]: (state, action) => [...state, {...action.payload}],
-})
-
-
+const phonebookReducer = persistReducer(persistConfig, phonebookSlice.reducer);
 
 export const store = configureStore({
   reducer: {
-    contacts: myReducer,
-    delete: clicksReducer,
+    phonebook: phonebookReducer,
   },
   middleware(getDefaultMiddleware) {
     return getDefaultMiddleware({
@@ -43,3 +34,19 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
+
+// import initialContacts from '../components/contacts.json'
+// export const addContact = createAction("phonebook/addContact");
+// export const delContact = createAction("phonebook/delContact");
+// const contactsReducer = createReducer
+//   (initialContacts, {
+//     [addContact]: (state, action) => [...state, { id: nanoid(), ...action.payload }],
+//     [delContact]: (state, action) => state.filter(contact => contact.id !== action.payload),
+//   });
+// export const setFilter = createAction("phonebook/setFilter");
+// const filterReducer = createReducer
+//   ("", {
+//     [setFilter]: (state, action) => action.payload,
+//   });
+// export const getFilter = store => store.filter;

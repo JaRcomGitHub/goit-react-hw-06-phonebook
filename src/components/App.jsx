@@ -1,25 +1,13 @@
-import { useState, useEffect } from "react";
-import { nanoid } from 'nanoid';
+import { useDispatch, useSelector } from "react-redux";
+import { addContact, delContact, setFilter, getContacts, getFilter } from "redux/phonebookSlice";
 import ContactForm from "./ContactForm";
 import ContactList from "./ContactList";
-// import initialContacts from './contacts.json'
 import Filter from "./Filter"
 
-const localContacts = () => {
-  const localContacts = localStorage.getItem('contacts');
-  const parsedContacts = JSON.parse(localContacts);
-  //console.log("restore");
-  return parsedContacts ? parsedContacts : [];//[] -> initialContacts
-}
-
 export default function App() {
-  const [contacts, setContacts] = useState(localContacts);
-  const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    //console.log("Update");
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
 
   const onAlert = name =>  {
     window.alert(`${name} is already in contacts.`);
@@ -33,32 +21,33 @@ export default function App() {
     );
   }
   
-  const deleteContact = (contactId) => {
-    setContacts(contacts.filter(contact => contact.id !== contactId));
-  };
-  
   const formSubmitHandler = data => {
     if (checkContact(data.name)) {
       onAlert(data.name);
       return false;
     }
-    setContacts(prevContacts => [...prevContacts, { id: nanoid(), ...data }]);
+    
+    dispatch(addContact(data));
     return true;
   };
 
-  const changeFilter = event => {
-    setFilter(event.currentTarget.value);
+  const deleteContact = (contactId) => {
+    dispatch(delContact(contactId));
   };
 
-  const getFilteredContacts = () => {
-    const normolizedFilter = filter.toLowerCase();
+  const changeFilter = event => {
+    dispatch(setFilter(event.currentTarget.value));
+  };
+
+  const getFilteredContacts = (name) => {
+    const normolizedFilter = name.toLowerCase();
 
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(normolizedFilter)
     );
   }
 
-  const filteredContacts = getFilteredContacts();
+  const filteredContacts = getFilteredContacts(filter);
 
   return (
     <div>
