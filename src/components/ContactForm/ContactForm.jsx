@@ -1,30 +1,49 @@
 import { useState } from "react";
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from "react-redux";
+import { addContact, getContacts } from "redux/phonebookSlice";
 import css from './ContactForm.module.css'
 
-export default function ContactForm({onSubmit}) {
+export default function ContactForm() {
     const [name, setName] = useState('');//'Name Names'
     const [number, setNumber] = useState('');//'123-456-789'
+    const contacts = useSelector(getContacts);
+    const dispatch = useDispatch();
 
+    const onAlert = name =>  {
+        window.alert(`${name} is already in contacts.`);
+    }
+  
+    const checkContact = (name) => {
+        const normolizedName = name.toLowerCase();
+
+        return contacts.some(contact =>
+            contact.name.toLowerCase().includes(normolizedName)
+        );
+    }
+
+    const handleSubmit = event => {
+        event.preventDefault();
+
+        if (checkContact(name)) {
+            onAlert(name);
+            return;
+        }
+        
+        dispatch(addContact({ name, number }));
+        reset();
+    }
+
+    const reset = () => {
+        setName('');
+        setNumber('');
+    }
+        
     const handleInputChangeName = event => {
         setName(event.currentTarget.value);
     }
 
     const handleInputChangeNumber = event => {
         setNumber(event.currentTarget.value);
-    }
-
-    const handleSubmit = event => {
-        event.preventDefault();
-        
-        if (onSubmit({name, number})) {
-            reset();
-        }
-    }
-
-    const reset = () => {
-        setName('');
-        setNumber('');
     }
 
     return (
@@ -57,7 +76,3 @@ export default function ContactForm({onSubmit}) {
         </form>
     );
 }
-
-ContactForm.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-};

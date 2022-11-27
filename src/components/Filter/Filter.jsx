@@ -1,8 +1,17 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts, getFilter, setFilter } from 'redux/phonebookSlice';
 import css from './Filter.module.css'
-import PropTypes from 'prop-types';
 
-export default function Filter({ value, onChange }) {
-    return (
+export default function Filter() {
+    const contacts = useSelector(getContacts);
+    const filter = useSelector(getFilter);
+    const dispatch = useDispatch();
+
+    const changeFilter = event => {
+        dispatch(setFilter(event.currentTarget.value));
+    };
+
+    return contacts.length > 0 &&  (
         <div className={css.filterBlock}>
             <p>Find contacts by name</p>
             <input
@@ -11,14 +20,9 @@ export default function Filter({ value, onChange }) {
                 pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
                 title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                 required
-                value={value}
-                onChange={onChange}
+                value={filter}
+                onChange={changeFilter}
             />
         </div>
     )
-};
-
-Filter.propTypes = {
-    value: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
 };

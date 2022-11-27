@@ -1,30 +1,39 @@
-import css from './ContactList.module.css'
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { delContact, getContacts, getFilter } from 'redux/phonebookSlice';
 import Contact from "./Contact";
+import css from './ContactList.module.css'
 
-export default function ContactList({ contacts, onDeleteContact }) {
-    return (
+export default function ContactList() {
+    const contacts = useSelector(getContacts);
+    const filter = useSelector(getFilter);
+    const dispatch = useDispatch();
+
+    const deleteContact = (contactId) => {
+        dispatch(delContact(contactId));
+    };
+    
+    const getFilteredContacts = (name) => {
+        const normolizedFilter = name.toLowerCase();
+
+        return contacts.filter(contact =>
+            contact.name.toLowerCase().includes(normolizedFilter)
+        );
+    }
+
+    const filteredContacts = getFilteredContacts(filter);
+
+    return filteredContacts.length > 0 && (
         <div className={css.contactListBlock}>
             <ul>
-                {contacts.map(({ id, name, number }) => (
+                {filteredContacts.map(({ id, name, number }) => (
                     <Contact
                         key={id}
                         name={name}
                         number={number}
-                        onDeleteContact={() => onDeleteContact(id)}
+                        onDeleteContact={() => deleteContact(id)}
                     /> 
                 ))}
             </ul>
         </div>
     );
 }
-
-ContactList.propTypes = {
-    contacts: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        number: PropTypes.string.isRequired,
-    })).isRequired,
-    onDeleteContact: PropTypes.func.isRequired,
-};
-
