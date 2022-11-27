@@ -14,7 +14,7 @@ export const phonebookSlice = createSlice({
       state.contacts.push({ id: nanoid(), ...action.payload });
     },
     delContact(state, action) {
-      return { contacts: state.contacts.filter(contact => contact.id !== action.payload) };
+      state.contacts = state.contacts.filter(contact => contact.id !== action.payload);
     },
     setFilter(state, action) {
       state.filter = action.payload;
